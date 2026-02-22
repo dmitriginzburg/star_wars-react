@@ -47,7 +47,7 @@ const AboutMe = () => {
                     setHero(info);
                 });
         }
-    }, [hero]);
+    }, []);
 
     return (
         <>

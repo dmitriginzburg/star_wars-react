@@ -38,7 +38,7 @@ const Contact = () => {
                     setPlanets(names);
                 });
         }
-    }, [planets]);
+    }, []);
 
     return (
         <div className="container">
