@@ -1,44 +1,64 @@
-import {base_url} from "../utils/constants.js";
-import {useEffect, useState} from "react";
+import { base_url } from "../utils/constants.js";
+import { useEffect, useState } from "react";
 
-const STORAGE_KEY = 'luke_skywalker';
-const THIRTY_DAYS = 30 * 24 * 60 * 60 * 1000;
+const storage_key = 'luke_skywalker';
+const thirty_days = 30 * 24 * 60 * 60 * 1000;
 
 const AboutMe = () => {
-    const [hero, setHero] = useState();
 
-    useEffect(() => {
-        const stored = localStorage.getItem(STORAGE_KEY);
+    const [hero, setHero] = useState(() => {
+        const stored = localStorage.getItem(storage_key);
 
-        if (stored) {
-            const {data, timestamp} = JSON.parse(stored);
-            if (Date.now() - timestamp < THIRTY_DAYS) {
-                setTimeout(() => setHero(data), 0);
-                return;
-            }
+        if (!stored) return null;
+
+        const { data, timestamp } = JSON.parse(stored);
+
+        if (Date.now() - timestamp < thirty_days) {
+            return data;
         }
 
-        fetch(`${base_url}/v1/peoples/1`)
-            .then(response => response.json())
-            .then(data => {
-                const info = {
-                    name: data.name,
-                    gender: data.gender,
-                    birth_year: data.birth_year,
-                    height: data.height,
-                    mass: data.mass,
-                    hair_color: data.hair_color,
-                    skin_color: data.skin_color,
-                    eye_color: data.eye_color
-                }
-                localStorage.setItem(STORAGE_KEY, JSON.stringify({data: info, timestamp: Date.now()}));
-                setHero(info);
-            })
-    }, [])
+        return null;
+    });
+
+    useEffect(() => {
+        if (!hero) {
+            fetch(`${base_url}/v1/peoples/1`)
+                .then(response => response.json())
+                .then(data => {
+                    const info = {
+                        name: data.name,
+                        gender: data.gender,
+                        birth_year: data.birth_year,
+                        height: data.height,
+                        mass: data.mass,
+                        hair_color: data.hair_color,
+                        skin_color: data.skin_color,
+                        eye_color: data.eye_color
+                    };
+
+                    localStorage.setItem(
+                        storage_key,
+                        JSON.stringify({
+                            data: info,
+                            timestamp: Date.now()
+                        })
+                    );
+
+                    setHero(info);
+                });
+        }
+    }, [hero]);
 
     return (
         <>
-            {(!!hero) &&
+            {!hero && (
+                <p>
+                    <span className="spinner-border spinner-border-sm"></span>
+                    <span className="spinner-grow spinner-grow-sm">Loading...</span>
+                </p>
+            )}
+
+            {!!hero &&
                 <div className='fs-2 lh-lg text-justify ms-5'>
                     <p><span className='display-3'>name:</span> {hero.name}</p>
                     <p><span className='display-3'>gender:</span> {hero.gender}</p>
@@ -52,6 +72,6 @@ const AboutMe = () => {
             }
         </>
     );
-}
+};
 
 export default AboutMe;
