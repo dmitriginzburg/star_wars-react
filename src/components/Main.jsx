@@ -1,21 +1,25 @@
+import { useContext } from "react";
+import { PageContext } from "../utils/context.js";
 import Home from "./Home.jsx";
 import AboutMe from "./AboutMe.jsx";
 import Contact from "./Contact.jsx";
 import StarWars from "./StarWars.jsx";
-import {navItems} from "../utils/constants.js";
+import { navItems } from "../utils/constants.js";
 
-const Main = ({page}) => {
+const Main = () => {
+
+    const { page } = useContext(PageContext);
 
     switch (page) {
         case navItems[1]:
-            return <AboutMe/>;
+            return <AboutMe />;
         case navItems[2]:
-            return <StarWars/>;
+            return <StarWars />;
         case navItems[3]:
-            return <Contact/>;
+            return <Contact />;
         default:
-            return <Home/>;
+            return <Home />;
     }
-}
+};
 
 export default Main;
